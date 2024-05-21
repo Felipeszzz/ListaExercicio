@@ -1,26 +1,56 @@
 #include <stdio.h>
-#include <ctype.h>
+#include <stdlib.h>
 
-int contar_vogais(char *string) {
-    int contador = 0;
-    while (*string) {
-        char c = *string;
-        if (c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u' ||
-            c == 'A' || c == 'E' || c == 'I' || c == 'O' || c == 'U') {
-            contador++;
-        }
-        string++;
+
+struct Produto {
+    char nome[50];
+    float preco;
+    int quantidade;
+};
+
+
+float calcularTotal(struct Produto produtos[], int numProdutos) {
+    float total = 0;
+    for (int i = 0; i < numProdutos; i++) {
+        total += produtos[i].preco * produtos[i].quantidade;
     }
-    return contador;
+    return total;
 }
 
 int main() {
-    char texto[100];
-    printf("Digite uma string: ");
-    fgets(texto, sizeof(texto), stdin);
+    int numProdutos;
+    printf("Quantos produtos deseja cadastrar? ");
+    scanf("%d", &numProdutos);
 
-    int numero_vogais = contar_vogais(texto);
-    printf("Número de vogais na string: %d\n", numero_vogais);
+   
+    struct Produto *produtos = (struct Produto *)malloc(numProdutos * sizeof(struct Produto));
+
+    
+    for (int i = 0; i < numProdutos; i++) {
+        printf("\nProduto %d:\n", i + 1);
+        printf("Nome: ");
+        scanf("%s", produtos[i].nome);
+        printf("Preço: ");
+        scanf("%f", &produtos[i].preco);
+        printf("Quantidade em estoque: ");
+        scanf("%d", &produtos[i].quantidade);
+    }
+
+    
+    printf("\nInformações dos Produtos:\n");
+    for (int i = 0; i < numProdutos; i++) {
+        printf("Produto %d:\n", i + 1);
+        printf("Nome: %s\n", produtos[i].nome);
+        printf("Preço: %.2f\n", produtos[i].preco);
+        printf("Quantidade em estoque: %d\n", produtos[i].quantidade);
+    }
+
+    
+    float total = calcularTotal(produtos, numProdutos);
+    printf("\nValor total em estoque: %.2f\n", total);
+
+    
+    free(produtos);
 
     return 0;
 }
