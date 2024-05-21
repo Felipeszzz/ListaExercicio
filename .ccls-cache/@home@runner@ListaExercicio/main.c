@@ -1,24 +1,26 @@
 #include <stdio.h>
+#include <ctype.h>
+
+int contar_vogais(char *string) {
+    int contador = 0;
+    while (*string) {
+        char c = *string;
+        if (c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u' ||
+            c == 'A' || c == 'E' || c == 'I' || c == 'O' || c == 'U') {
+            contador++;
+        }
+        string++;
+    }
+    return contador;
+}
 
 int main() {
-    int qtd, i, soma = 0;
+    char texto[100];
+    printf("Digite uma string: ");
+    fgets(texto, sizeof(texto), stdin);
 
-    printf("Digite a quantidades de arrays a serem somados: ");
-    scanf("%d", &qtd);
-
-    int array[qtd];
-
-    printf("Digite os elementos do array:\n");
-    for (i = 0; i < qtd; i++) {
-        printf("Elemento %d: ", i + 1);
-        scanf("%d", &array[i]);
-    }
-
-    for (i = 0; i < qtd; i++) {
-        soma += array[i];
-    }
-
-    printf("A soma dos elementos do array é: %d\n", soma);
+    int numero_vogais = contar_vogais(texto);
+    printf("Número de vogais na string: %d\n", numero_vogais);
 
     return 0;
 }
