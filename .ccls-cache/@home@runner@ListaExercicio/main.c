@@ -1,129 +1,54 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 
-#define MAX_NAME_LENGTH 50
-#define FILENAME "funcionarios.dat"
 
 typedef struct {
-    char nome[MAX_NAME_LENGTH];
+    char nome[50];
     int idade;
-    float salario;
-} Funcionario;
+} Pessoa;
 
-void adicionarFuncionario();
-void listarFuncionarios();
-void buscarFuncionario();
+
+int compara_idade(const void *a, const void *b) {
+    Pessoa *pessoaA = (Pessoa *)a;
+    Pessoa *pessoaB = (Pessoa *)b;
+
+    return (pessoaA->idade - pessoaB->idade);
+}
 
 int main() {
-    int opcao;
+    int n;
 
-    do {
-        printf("Menu:\n");
-        printf("1. Adicionar novo funcionario\n");
-        printf("2. Listar todos os funcionarios\n");
-        printf("3. Buscar funcionario por nome\n");
-        printf("4. Sair\n");
-        printf("Escolha uma opcao: ");
-        scanf("%d", &opcao);
-        getchar();
+    
+    printf("Quantas pessoas você quer inserir? ");
+    scanf("%d", &n);
 
-        switch(opcao) {
-            case 1:
-                adicionarFuncionario();
-                break;
-            case 2:
-                listarFuncionarios();
-                break;
-            case 3:
-                buscarFuncionario();
-                break;
-            case 4:
-                printf("Saindo...\n");
-                break;
-            default:
-                printf("Opcao invalida! Tente novamente.\n");
-        }
-    } while(opcao != 4);
+    
+    Pessoa *pessoas = malloc(n * sizeof(Pessoa));
+    if (pessoas == NULL) {
+        fprintf(stderr, "Erro ao alocar memória\n");
+        return 1;
+    }
+
+    
+    for (int i = 0; i < n; i++) {
+        printf("Digite o nome da pessoa %d: ", i + 1);
+        scanf("%s", pessoas[i].nome);
+        printf("Digite a idade da pessoa %d: ", i + 1);
+        scanf("%d", &pessoas[i].idade);
+    }
+
+   
+    qsort(pessoas, n, sizeof(Pessoa), compara_idade);
+
+    
+    printf("\nArray ordenado por idade:\n");
+    for (int i = 0; i < n; i++) {
+        printf("Nome: %s\n", pessoas[i].nome);
+        printf("Idade: %d\n", pessoas[i].idade);
+    }
+
+    
+    free(pessoas);
 
     return 0;
-}
-
-void adicionarFuncionario() {
-    FILE *file = fopen(FILENAME, "ab");
-    if (!file) {
-        perror("Erro ao abrir o arquivo");
-        return;
-    }
-
-    Funcionario funcionario;
-    printf("Digite o nome do funcionario: ");
-    fgets(funcionario.nome, MAX_NAME_LENGTH, stdin);
-    size_t len = strlen(funcionario.nome);
-    if (len > 0 && funcionario.nome[len - 1] == '\n') {
-        funcionario.nome[len - 1] = '\0';
-    }
-
-    printf("Digite a idade do funcionario: ");
-    scanf("%d", &funcionario.idade);
-    printf("Digite o salario do funcionario: ");
-    scanf("%f", &funcionario.salario);
-    getchar();  
-
-    fwrite(&funcionario, sizeof(Funcionario), 1, file);
-
-    fclose(file);
-    printf("Funcionario adicionado com sucesso!\n");
-}
-
-void listarFuncionarios() {
-    FILE *file = fopen(FILENAME, "rb");
-    if (!file) {
-        perror("Erro ao abrir o arquivo");
-        return;
-    }
-
-    Funcionario funcionario;
-    while (fread(&funcionario, sizeof(Funcionario), 1, file)) {
-        printf("Nome: %s\n", funcionario.nome);
-        printf("Idade: %d\n", funcionario.idade);
-        printf("Salario: %.2f\n\n", funcionario.salario);
-    }
-
-    fclose(file);
-}
-
-void buscarFuncionario() {
-    FILE *file = fopen(FILENAME, "rb");
-    if (!file) {
-        perror("Erro ao abrir o arquivo");
-        return;
-    }
-
-    char nomeBusca[MAX_NAME_LENGTH];
-    printf("Digite o nome do funcionario para buscar: ");
-    fgets(nomeBusca, MAX_NAME_LENGTH, stdin);
-    size_t len = strlen(nomeBusca);
-    if (len > 0 && nomeBusca[len - 1] == '\n') {
-        nomeBusca[len - 1] = '\0';
-    }
-
-    Funcionario funcionario;
-    int encontrado = 0;
-    while (fread(&funcionario, sizeof(Funcionario), 1, file)) {
-        if (strcmp(funcionario.nome, nomeBusca) == 0) {
-            printf("Funcionario encontrado:\n");
-            printf("Nome: %s\n", funcionario.nome);
-            printf("Idade: %d\n", funcionario.idade);
-            printf("Salario: %.2f\n", funcionario.salario);
-            encontrado = 1;
-            break;
-        }
-    }
-
-    if (!encontrado) {
-        printf("Funcionario nao encontrado.\n");
-    }
-
-    fclose(file);
 }
