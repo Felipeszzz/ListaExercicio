@@ -2,53 +2,81 @@
 #include <stdlib.h>
 
 
-typedef struct {
-    char nome[50];
-    int idade;
-} Pessoa;
+void imprimirArray(int* array, int tamanho) {
+for (int i = 0; i < tamanho; i++) {
+printf("%d ", array[i]);
+}
+printf("\n");
+}
 
 
-int compara_idade(const void *a, const void *b) {
-    Pessoa *pessoaA = (Pessoa *)a;
-    Pessoa *pessoaB = (Pessoa *)b;
+int* inverterArray(int* array, int tamanho) {
+if (array == NULL || tamanho <= 0) {
+printf("Entrada inválida\n");
+return NULL;
+}
 
-    return (pessoaA->idade - pessoaB->idade);
+
+int* arrayInvertido = (int*)malloc(tamanho * sizeof(int));
+if (arrayInvertido == NULL) {
+printf("Erro de alocação de memória\n");
+exit(1); 
+}
+
+
+int* ptrOriginal = array + tamanho - 1;
+int* ptrInvertido = arrayInvertido;
+
+
+while (ptrOriginal >= array) {
+*ptrInvertido = *ptrOriginal;
+ptrOriginal--;
+ptrInvertido++;
+}
+
+
+return arrayInvertido;
 }
 
 int main() {
-    int n;
+int tamanho;
 
-    
-    printf("Quantas pessoas você quer inserir? ");
-    scanf("%d", &n);
 
-    
-    Pessoa *pessoas = malloc(n * sizeof(Pessoa));
-    if (pessoas == NULL) {
-        fprintf(stderr, "Erro ao alocar memória\n");
-        return 1;
-    }
+printf("Digite o tamanho do array: ");
+scanf("%d", &tamanho);
 
-    
-    for (int i = 0; i < n; i++) {
-        printf("Digite o nome da pessoa %d: ", i + 1);
-        scanf("%s", pessoas[i].nome);
-        printf("Digite a idade da pessoa %d: ", i + 1);
-        scanf("%d", &pessoas[i].idade);
-    }
 
-   
-    qsort(pessoas, n, sizeof(Pessoa), compara_idade);
+if (tamanho <= 0) {
+printf("Tamanho inválido\n");
+return 1;
+}
 
-    
-    printf("\nArray ordenado por idade:\n");
-    for (int i = 0; i < n; i++) {
-        printf("Nome: %s\n", pessoas[i].nome);
-        printf("Idade: %d\n", pessoas[i].idade);
-    }
 
-    
-    free(pessoas);
+int* array = (int*)malloc(tamanho * sizeof(int));
+if (array == NULL) {
+printf("Erro de alocação de memória\n");
+return 1;
+}
 
-    return 0;
+
+printf("Digite os elementos do array:\n");
+for (int i = 0; i < tamanho; i++) {
+printf("Elemento %d: ", i + 1);
+scanf("%d", &array[i]);
+}
+
+
+int* arrayInvertido = inverterArray(array, tamanho);
+if (arrayInvertido != NULL) {
+printf("Array invertido: ");
+imprimirArray(arrayInvertido, tamanho);
+
+
+free(arrayInvertido);
+}
+
+
+free(array);
+
+return 0;
 }
