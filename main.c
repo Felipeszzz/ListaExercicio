@@ -1,82 +1,85 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-
-void imprimirArray(int* array, int tamanho) {
-for (int i = 0; i < tamanho; i++) {
-printf("%d ", array[i]);
-}
-printf("\n");
+int compare(const void *a, const void *b) {
+return (*(int*)a - *(int*)b);
 }
 
 
-int* inverterArray(int* array, int tamanho) {
-if (array == NULL || tamanho <= 0) {
-printf("Entrada inválida\n");
-return NULL;
+double calcularMedia(int arr[], int tamanho) {
+int soma = 0;
+for(int i = 0; i < tamanho; i++) {
+soma += arr[i];
+}
+return (double)soma / tamanho;
 }
 
 
-int* arrayInvertido = (int*)malloc(tamanho * sizeof(int));
-if (arrayInvertido == NULL) {
-printf("Erro de alocação de memória\n");
-exit(1); 
+double calcularMediana(int arr[], int tamanho) {
+qsort(arr, tamanho, sizeof(int), compare);
+if (tamanho % 2 == 0) {
+return (arr[tamanho/2 - 1] + arr[tamanho/2]) / 2.0;
+} else {
+return arr[tamanho/2];
+}
 }
 
 
-int* ptrOriginal = array + tamanho - 1;
-int* ptrInvertido = arrayInvertido;
+int calcularModa(int arr[], int tamanho) {
+qsort(arr, tamanho, sizeof(int), compare);
 
+int moda = arr[0];
+int maxContagem = 1;
+int contagemAtual = 1;
 
-while (ptrOriginal >= array) {
-*ptrInvertido = *ptrOriginal;
-ptrOriginal--;
-ptrInvertido++;
+for(int i = 1; i < tamanho; i++) {
+if(arr[i] == arr[i - 1]) {
+contagemAtual++;
+} else {
+if(contagemAtual > maxContagem) {
+maxContagem = contagemAtual;
+moda = arr[i - 1];
+}
+contagemAtual = 1;
+}
 }
 
+if(contagemAtual > maxContagem) {
+moda = arr[tamanho - 1];
+}
 
-return arrayInvertido;
+return moda;
 }
 
 int main() {
-int tamanho;
+int n;
+printf("Digite o número de elementos do array: ");
+scanf("%d", &n);
 
-
-printf("Digite o tamanho do array: ");
-scanf("%d", &tamanho);
-
-
-if (tamanho <= 0) {
-printf("Tamanho inválido\n");
+if (n <= 0) {
+printf("O número de elementos deve ser maior que zero.\n");
 return 1;
 }
 
-
-int* array = (int*)malloc(tamanho * sizeof(int));
-if (array == NULL) {
-printf("Erro de alocação de memória\n");
+int *arr = (int*)malloc(n * sizeof(int));
+if (arr == NULL) {
+printf("Erro de alocação de memória.\n");
 return 1;
 }
-
 
 printf("Digite os elementos do array:\n");
-for (int i = 0; i < tamanho; i++) {
-printf("Elemento %d: ", i + 1);
-scanf("%d", &array[i]);
+for(int i = 0; i < n; i++) {
+scanf("%d", &arr[i]);
 }
 
+double media = calcularMedia(arr, n);
+double mediana = calcularMediana(arr, n);
+int moda = calcularModa(arr, n);
 
-int* arrayInvertido = inverterArray(array, tamanho);
-if (arrayInvertido != NULL) {
-printf("Array invertido: ");
-imprimirArray(arrayInvertido, tamanho);
+printf("Média: %.2f\n", media);
+printf("Mediana: %.2f\n", mediana);
+printf("Moda: %d\n", moda);
 
-
-free(arrayInvertido);
-}
-
-
-free(array);
-
+free(arr);
 return 0;
 }
